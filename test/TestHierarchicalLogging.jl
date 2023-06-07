@@ -257,6 +257,7 @@ A2_B1_logger_name = "ModuleA2.ModuleB1"
         h = HierarchicalLogger(root_logger)
 
         insert_logger!(h, A_logger_name, logger1)
+        @test_throws ErrorException insert_logger!(h, A_logger_name, logger1)
         @Test h[root_logger_id].base_logger == root_logger
         @Test h[A2_logger_name].base_logger == root_logger
         @Test h[A2_B1_logger_name].base_logger == root_logger
@@ -299,7 +300,20 @@ A2_B1_logger_name = "ModuleA2.ModuleB1"
         for (k,logger) in pairs(all_loggers)
             @Test logger.messages == ref_messages[k]
         end
-    
+
+        # Old logger is discarded and no longer receives messages
+        new_logger1 = BaseLogger(; current_level=MutableLogLevel(Info))
+        set_logger!(h, A_logger_name, new_logger1)
+        
+        @test underlying_logger(h[A_logger_name]) === new_logger1
+        
+        handle_message(h, Info, "New", ModuleA, nothing, nothing, "a.jl", 1)
+
+        @Test new_logger1.messages == [SampleRecord(Info, "New", "ModuleA", nothing, nothing, "a.jl", 1)]
+        
+        for (k,logger) in pairs(all_loggers)
+            @Test logger.messages == ref_messages[k]
+        end
     end
     @testset "Root has depth > 1 children" begin
         root_logger = BaseLogger(; current_level=MutableLogLevel(Info))
@@ -463,7 +477,7 @@ A2_B1_logger_name = "ModuleA2.ModuleB1"
         @error "Errored" _module=ModuleA.ModuleB _file=_file _line=_line _group=_group _id=_id
         @error "Errored" _module=ModuleA _file=_file _line=_line _group=_group _id=_id
         @error "Errored" _module=ModuleA2.ModuleB1 _file=_file _line=_line _group=_group _id=_id
-        
+
         push!(ref_messages[A2_logger_name], SampleRecord(Error, "Errored", A2_B1_logger_name,nothing, nothing, "a.jl", 4))
         push!(ref_messages[A_B_C_logger_name], SampleRecord(Error, "Errored", A_B_C_logger_name,nothing, nothing, "a.jl", 4))
         push!(ref_messages[A_B_C_logger_name], SampleRecord(Error, "Errored", A_B_logger_name,nothing, nothing, "a.jl", 4))
