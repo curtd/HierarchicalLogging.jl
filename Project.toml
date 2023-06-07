@@ -1,7 +1,7 @@
 name = "HierarchicalLogging"
 uuid = "f33c120b-91a0-4a1c-b926-14fa61c08c77"
 authors = ["Curt Da Silva <curt.dasilva@gmail.com>"]
-version = "1.0.0"
+version = "1.0.1"
 
 [deps]
 Dictionaries = "85a47980-9c8c-11e8-2b9f-f7ca1fa99fb4"
