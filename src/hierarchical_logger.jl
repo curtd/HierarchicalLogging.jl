@@ -92,7 +92,7 @@ function set_logger!(h::HierarchicalLogger, key::Vector{SubString{String}}, logg
     if haskey(h, key)
         existing_logger = h[key]
         new_level = max(min_enabled_level(existing_logger), min_enabled_level(logger))
-        return h.loggers[key] = MutableLogLevel(logger, new_level, join(key, h.delimiter))
+        return h.loggers[key] = MutableLogLevelLogger(logger, new_level, join(key, h.delimiter))
     else
         return insert_logger!(h, key, logger)
     end
