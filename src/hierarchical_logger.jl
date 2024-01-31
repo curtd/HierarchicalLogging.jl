@@ -220,6 +220,7 @@ Logging.shouldlog(h::HierarchicalLogger, level::Symbol, args...) = shouldlog(h, 
 Logging.catch_exceptions(logger::HierarchicalLogger) = catch_exceptions(logger[ROOT_LOGGER_KEY])
 
 function Logging.handle_message(h::HierarchicalLogger, level, message, _module, args...; kwargs...)
+    @nospecialize
     logger = h[_module]
     handle_message(logger, level, message, _module, args...; kwargs...)
     
