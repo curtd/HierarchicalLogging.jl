@@ -1,3 +1,6 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 HierarchicalLogging = "f33c120b-91a0-4a1c-b926-14fa61c08c77"
+
+[compat]
+Documenter = "1"
